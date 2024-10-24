@@ -127,11 +127,12 @@ class _CameraViewState extends State<CameraView> {
       final position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
       var uri = Uri.parse("https://camera-test-task.free.beeceptor.com/upload_photo");
+      List<int> imageBytes = await image.readAsBytes();
       var request = MultipartRequest('POST', uri)
         ..fields['comment'] = comment ?? ''
         ..fields['latitude'] = position.latitude.toString()
         ..fields['longitude'] = position.longitude.toString()
-        ..files.add(await MultipartFile.fromPath('photo', image.path, filename: basename(image.path)));
+        ..files.add(MultipartFile.fromBytes('photo', imageBytes, filename: basename(image.path)));
       request.headers['Content-Type'] = 'application/javascript';
       var response = await request.send();
       if (response.statusCode == 200) {
